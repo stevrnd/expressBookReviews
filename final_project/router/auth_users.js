@@ -63,6 +63,11 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         res.status(404).send('Book not found');
         return;
     }
+
+    // Initialise the reviews object if it doesn't exist
+    if (!books[isbn].reviews) {
+        books[isbn].reviews = {};
+    }
     // Check if the user has already reviewed the book
     if (books[isbn].reviews[username]) {
         // Modify existing review
@@ -77,7 +82,30 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 
 //delete book review
 regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const isbn = req.params.isbn;
+    const username = req.session.username;
 
+    // Check if the book exists
+    if (!books[isbn]) {
+        res.status(404).send('Book not found');
+        return;
+    }
+
+    // Log the current state of reviews for debugging
+    console.log('Current reviews:', books[isbn].reviews);
+
+    // Check if the user has reviewed the book
+    // Does not work atm
+    // if (!books[isbn].reviews[username]) {
+    //     res.status(404).send('Review not found');
+    //     return;
+    // }
+    delete books[isbn].reviews[username];
+
+    // Log the updated state of reviews for debugging
+    console.log('Reviews after deletion:', books[isbn].reviews);
+
+    return res.status(200).json({message: "Review for the book with ISBN "+ isbn+ " has been deleted"});
 });
 
 module.exports.authenticated = regd_users;
