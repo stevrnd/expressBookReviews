@@ -64,15 +64,20 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         return;
     }
     // Check if the user has already reviewed the book
-  if (books[isbn].review[username]) {
-    // Modify existing review
-    books[isbn].review[username] = reviewText;
-    return res.status(200).json({message: "Review for the book with ISBN has been added/updated"});
-  } else {
-    // Add a new review
-    books[isbn].review[username] = reviewText;
-    return res.status(200).json({message: "Review for the book with ISBN has been added/updated"});
-  }
+    if (books[isbn].reviews[username]) {
+        // Modify existing review
+        books[isbn].reviews[username] = reviewText;
+        return res.status(200).json({message: "Review for the book with ISBN "+ isbn +" has been added/updated"});
+    } else {
+        // Add a new review
+        books[isbn].reviews[username] = reviewText;
+        return res.status(200).json({message: "Review for the book with ISBN "+ isbn+ " has been added/updated"});
+    }
+});
+
+//delete book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+
 });
 
 module.exports.authenticated = regd_users;
